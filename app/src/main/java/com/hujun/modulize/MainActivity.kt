@@ -3,10 +3,12 @@ package com.hujun.modulize
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.hujun.modulize.annotation.ARouter
 import com.hujun.modulize.order.Order_MainActivity
 import com.hujun.modulize.personal.PersonalMainActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
+@ARouter(path = "/app/MainActivity")
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

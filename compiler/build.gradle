@@ -1,0 +1,21 @@
+import javax.tools.JavaCompiler
+
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.google.auto.service:auto-service-annotations:1.0-rc5'
+    //AutoService,注解处理器，Google提供的
+    annotationProcessor 'com.google.auto.service:auto-service:1.0-rc5'
+
+    //引入Annotation，然注解处理器来处理注解
+    implementation project(":annotation")
+}
+
+//java控制台输出中文乱码的问题
+tasks.withType(JavaCompiler){
+    options.encoding = "UTF-8"
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"

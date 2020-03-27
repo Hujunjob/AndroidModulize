@@ -80,6 +80,15 @@ android {
                 cppFlags ""
             }
         }
+
+        //在gradle文件中配置选项参数值，用于APT传参数值
+        //必须写在defaultConfig节点中
+        javaCompileOptions{
+            annotationProcessorOptions{
+                arguments = [content:"hello apt"]
+            }
+        }
+        android.defaultConfig.javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
     }
 
     buildTypes {
@@ -93,6 +102,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+
 
     //adbOptions可以对adb操作添加配置
     adbOptions{
@@ -148,6 +159,8 @@ dependencies {
 
     //公共基础库
     implementation project(":common")
+    implementation project(":annotation")
+    annotationProcessor project(":compiler")
 
     if (isRelease){
         implementation project(":order")
