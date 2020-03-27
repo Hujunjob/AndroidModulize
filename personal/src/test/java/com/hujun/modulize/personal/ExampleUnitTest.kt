@@ -1,4 +1,4 @@
-package com.hujun.androidmodulize
+package com.hujun.modulize.personal
 
 import org.junit.Test
 

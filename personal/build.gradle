@@ -1,0 +1,52 @@
+if (!isRelease){
+    apply plugin: 'com.android.application'
+}else{
+    apply plugin: 'com.android.library'
+}
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+def androidId = rootProject.ext.androidId
+def support = rootProject.ext.support
+def isRelease = rootProject.ext.isRelease
+def appId = rootProject.ext.appId
+def testSupport = rootProject.ext.testSupport
+def androidTestSupport = rootProject.ext.androidTestSupport
+
+android {
+    compileSdkVersion androidId.compileSdkVersion
+    buildToolsVersion androidId.buildToolsVersion
+
+    defaultConfig {
+        if (!isRelease){
+            applicationId appId.personal
+        }
+        minSdkVersion androidId.minSdkVersion
+        targetSdkVersion androidId.targetSdkVersion
+        versionCode androidId.versionCode
+        versionName androidId.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("boolean","isRelease",String.valueOf(isRelease))
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(":common")
+
+    support.each { k, v -> implementation v }
+    testSupport.each { k, v -> testImplementation v }
+    androidTestSupport.each { k, v -> androidTestImplementation v }
+
+}

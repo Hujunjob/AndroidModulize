@@ -1,0 +1,68 @@
+if (!isRelease) {
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+def androidId = rootProject.ext.androidId
+def support = rootProject.ext.support
+def isRelease = rootProject.ext.isRelease
+def appId = rootProject.ext.appId
+def testSupport = rootProject.ext.testSupport
+def androidTestSupport = rootProject.ext.androidTestSupport
+
+android {
+    compileSdkVersion androidId.compileSdkVersion
+    buildToolsVersion androidId.buildToolsVersion
+
+    defaultConfig {
+        if (!isRelease) {
+            applicationId appId.order
+        }
+        minSdkVersion androidId.minSdkVersion
+        targetSdkVersion androidId.targetSdkVersion
+        versionCode androidId.versionCode
+        versionName androidId.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("boolean", "isRelease", String.valueOf(isRelease))
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    //配置资源路径，方便测试环境，打包时不集成到正式环境
+    sourceSets {
+        main {
+            if (!isRelease) {
+                //子模块下模式
+                manifest.srcFile('src/main/AndroidManifest.xml')
+            } else {
+                //集成模式
+                manifest.srcFile('src/main/AndroidManifest.xml')
+                java {
+                    //集成模式下，debug目录下的文件不需要合并到主程序里
+                    exclude '**/debug/**'
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(":common")
+
+    support.each { k, v -> implementation v }
+    testSupport.each { k, v -> testImplementation v }
+    androidTestSupport.each { k, v -> androidTestImplementation v }
+
+}

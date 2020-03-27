@@ -2,18 +2,78 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+//赋值与引用
+def androidId = rootProject.ext.androidId
+def appId = rootProject.ext.appId
+def support = rootProject.ext.support
+def testSupport = rootProject.ext.testSupport
+def androidTestSupport = rootProject.ext.androidTestSupport
+
+def isRelease = rootProject.ext.isRelease
+
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdkVersion androidId.compileSdkVersion
+    buildToolsVersion androidId.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.hujun.androidmodulize"
-        minSdkVersion 21
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        applicationId appId.app
+        minSdkVersion androidId.minSdkVersion
+        targetSdkVersion androidId.targetSdkVersion
+        versionCode androidId.versionCode
+        versionName androidId.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        //开启分包
+        multiDexEnabled false
+        //设置分包配置，在热修复中使用过
+        multiDexKeepFile file('multidex-config.txt')
+        //将svg图片生成指定维度的png图片
+        vectorDrawables.generatedDensities('xhdpi','xxhdpi')
+
+        //使用support-v7兼容（5.0版本以上）
+        vectorDrawables.useSupportLibrary = true
+        //只保留指定和默认资源
+        resConfig('zh-rCN')
+
+        //配置so库的CPU架构
+        ndk{
+            abiFilters('armeabi-v7a')
+        }
+
+        //源集，设置源集的属性，更改源集的各种目录位置
+        sourceSets{
+            main{
+                if (!isRelease){
+                    //如果是组件化模式，需要单独运行时
+                    manifest.srcFile 'src/main/AndroidManifest.xml'
+                }else{
+                    //集成模式，整个项目打包
+                    manifest.srcFile 'src/main/AndroidManifest.xml'
+                }
+            }
+        }
+
+        buildConfigField("boolean","isRelease",String.valueOf(isRelease))
+
+        //构建签名信息
+        signingConfigs{
+            release{
+                //签名证书文件位置
+                storeFile file("/Users/junhu/git/AndroidModulize/key")
+                //签名证书的类型
+                storeType "hujun"
+                //签名证书的密码
+                storePassword "123123"
+                //签名证书中密钥别名
+                keyAlias "key0"
+                //签名证书中该密钥的密码
+                keyPassword "123123"
+                //是否开启V2打包
+                v2SigningEnabled true
+            }
+        }
+
 
         externalNativeBuild {
             cmake {
@@ -23,10 +83,52 @@ android {
     }
 
     buildTypes {
+        debug{
+            buildConfigField("String","url","\"${rootProject.ext.url.debug}\"")
+        }
         release {
+            signingConfig signingConfigs.release
+            buildConfigField("String","url","\"${rootProject.ext.url.release}\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    //adbOptions可以对adb操作添加配置
+    adbOptions{
+        //配置操作超时时间
+        timeOutInMs = 5 * 1000
+        //adb install 命令的选项配置
+        installOptions '-r','-s'
+    }
+
+    //对dx操作的配置，接受一个DexOptions类型的闭包，配置由DexOptions提供
+    dexOptions{
+        //配置执行dx命令时为其分配的最大堆内存
+        javaMaxHeapSize "4g"
+        //配置是否预执行dex Libraries工程，开启后悔提高增量构建速度，不过会影响clean构建速度，默认true
+        preDexLibraries = false
+        //配置是否开启jumbo模式，代码方法数超过65535时，需要强制开启才能构建成功
+        jumboMode true
+        //配置gradle 运行dx命令时使用的线程数量
+        threadCount 8
+        //配置multidex参数
+        additionalParameters=[
+                '--multi-dex',//多dex分包
+                '--set-max-idx-number=50000',//每个包内方法数上限
+                '--minimal-main-dex'
+        ]
+
+    }
+
+    //执行gradle lint命令即可运行lint检查，默认生成的报告在outputs/lint-results.html中
+    lintOptions{
+        //遇到lint检查错误会终止构建，默认为false
+        abortOnError false
+        //将警告当做错误来处理
+        warningsAsErrors false
+        //检查新API
+        check 'NewApi'
     }
 
     externalNativeBuild {
@@ -39,11 +141,16 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    support.each { k, v -> implementation v }
+    testSupport.each { k, v -> testImplementation v }
+    androidTestSupport.each { k, v -> androidTestImplementation v }
+
+    //公共基础库
+    implementation project(":common")
+
+    if (isRelease){
+        implementation project(":order")
+        implementation project(":personal")
+    }
 }

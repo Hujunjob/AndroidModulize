@@ -1,7 +1,10 @@
-package com.hujun.androidmodulize
+package com.hujun.modulize
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.hujun.modulize.order.Order_MainActivity
+import com.hujun.modulize.personal.PersonalMainActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -10,8 +13,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Example of a call to a native method
-        sample_text.text = stringFromJNI()
+        btn_order.setOnClickListener { jumpToOrder() }
+        btn_personal.setOnClickListener { jumpToPersonal() }
+    }
+
+    fun jumpToOrder() {
+        val intent = Intent(this, Order_MainActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun jumpToPersonal() {
+        val intent = Intent(this, PersonalMainActivity::class.java)
+        startActivity(intent)
     }
 
     /**

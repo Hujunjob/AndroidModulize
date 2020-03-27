@@ -1,2 +1,5 @@
 rootProject.name='AndroidModulize'
 include ':app'
+include ':order'
+include ':common'
+include ':personal'
