@@ -64,5 +64,5 @@ dependencies {
     support.each { k, v -> implementation v }
     testSupport.each { k, v -> testImplementation v }
     androidTestSupport.each { k, v -> androidTestImplementation v }
-
+    implementation project(":annotation")
 }

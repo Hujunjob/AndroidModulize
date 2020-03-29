@@ -4,12 +4,19 @@ apply plugin: 'java-library'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.google.auto.service:auto-service-annotations:1.0-rc5'
-    //AutoService,注解处理器，Google提供的
-    annotationProcessor 'com.google.auto.service:auto-service:1.0-rc5'
+// 注册注解，并对其生成META-INF的配置信息，rc2在gradle5.0后有坑
+    // As-3.2.1 + gradle4.10.1-all + auto-service:1.0-rc2
+    // implementation 'com.google.auto.service:auto-service:1.0-rc2'
+
+    // As-3.4.1 + gradle5.1.1-all + auto-service:1.0-rc4
+    compileOnly'com.google.auto.service:auto-service:1.0-rc5'
+    annotationProcessor'com.google.auto.service:auto-service:1.0-rc5'
 
     //引入Annotation，然注解处理器来处理注解
     implementation project(":annotation")
+
+    //帮助以类调用的形式来生成java代码
+    implementation 'com.squareup:javapoet:1.10.0'
 }
 
 //java控制台输出中文乱码的问题

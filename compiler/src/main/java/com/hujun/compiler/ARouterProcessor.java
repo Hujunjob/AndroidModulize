@@ -49,14 +49,18 @@ public class ARouterProcessor extends AbstractProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
-
         elementUtils = processingEnvironment.getElementUtils();
         typeUtils = processingEnvironment.getTypeUtils();
         messager = processingEnvironment.getMessager();
         filer = processingEnvironment.getFiler();
-
+        if (messager==null){
+            return;
+        }
+        if (processingEnvironment.getOptions()==null){
+            return;
+        }
         String content = processingEnvironment.getOptions().get("content");
-        messager.printMessage(Diagnostic.Kind.NOTE,content);
+        print(content);
     }
 
 
@@ -70,32 +74,18 @@ public class ARouterProcessor extends AbstractProcessor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        print("process");
         if (set.isEmpty()) {
             return false;
         }
 
         //获取项目中所有使用了ARouter注解的节点
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(ARouter.class);
-        //遍历所有的类节点
+        //遍历所有被ARouter注解的类节点
         for (Element element : elements) {
            generateJavaClassFile(element);
         }
-
-
         return true;
     }
-
-
-    //    package com.hujun.modulize;
-//    public class XActivity$$ARouter {
-//        public static Class<?> findTargetClass(String path){
-//            if (path.equalsIgnoreCase("/app/MainActivity")){
-//                return MainActivity.class;
-//            }
-//            return null;
-//        }
-//    }
 
     private void generateJavaClassFile(Element element){
         String pkgName = elementUtils.getPackageOf(element).getQualifiedName().toString();
@@ -107,7 +97,7 @@ public class ARouterProcessor extends AbstractProcessor {
             JavaFileObject sourceFile = filer.createSourceFile(pkgName+"."+finalClassName);
             Writer writer = sourceFile.openWriter();
             StringBuilder builder = new StringBuilder();
-            builder.append("package "+pkgName+"\n");
+            builder.append("package "+pkgName+";\n");
             builder.append("public class "+finalClassName+"{\n");
             builder.append("public static Class<?> findTargetClass(String path){\n");
             ARouter router = element.getAnnotation(ARouter.class);
@@ -116,7 +106,6 @@ public class ARouterProcessor extends AbstractProcessor {
             builder.append("}\n");
             builder.append("return null;\n");
             builder.append("}\n}");
-            print(builder.toString());
             writer.write(builder.toString());
             writer.close();
         } catch (IOException e) {
@@ -125,6 +114,9 @@ public class ARouterProcessor extends AbstractProcessor {
     }
 
     private void print(String msg){
-        messager.printMessage(Diagnostic.Kind.NOTE,msg);
+        if (messager==null){
+            return;
+        }
+        messager.printMessage(Diagnostic.Kind.WARNING,msg);
     }
 }

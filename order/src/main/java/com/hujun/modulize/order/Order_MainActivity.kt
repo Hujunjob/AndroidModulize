@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.util.Log
 import com.hujun.common.RecordPathManager
 import com.hujun.common.base.BaseActivity
+import com.hujun.modulize.annotation.ARouter
 import kotlinx.android.synthetic.main.order_activity_main.*
 
+@ARouter(path = "/order/Order_MainActivity")
 class Order_MainActivity : BaseActivity() {
     companion object{
         private val TAG = this::class.java.name.replace("${'$'}Companion","").split(".").last()

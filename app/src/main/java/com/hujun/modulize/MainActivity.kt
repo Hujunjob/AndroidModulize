@@ -4,8 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.hujun.modulize.annotation.ARouter
-import com.hujun.modulize.order.Order_MainActivity
-import com.hujun.modulize.personal.PersonalMainActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 @ARouter(path = "/app/MainActivity")
@@ -17,16 +15,18 @@ class MainActivity : AppCompatActivity() {
 
         btn_order.setOnClickListener { jumpToOrder() }
         btn_personal.setOnClickListener { jumpToPersonal() }
+
+//        `MainActivity$$ARouter`.get1()
     }
 
     fun jumpToOrder() {
-        val intent = Intent(this, Order_MainActivity::class.java)
-        startActivity(intent)
+//        val intent = Intent(this, Order_MainActivity::class.java)
+//        startActivity(intent)
     }
 
     fun jumpToPersonal() {
-        val intent = Intent(this, PersonalMainActivity::class.java)
-        startActivity(intent)
+//        val intent = Intent(this, PersonalMainActivity::class.java)
+//        startActivity(intent)
     }
 
     /**
