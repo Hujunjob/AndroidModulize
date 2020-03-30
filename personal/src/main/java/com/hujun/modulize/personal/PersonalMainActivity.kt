@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.hujun.common.base.BaseActivity
+import com.hujun.modulize.annotation.ARouter
 import kotlinx.android.synthetic.main.personal_activity_main.*
 
+@ARouter(path = "/personal/PersonalMainActivity")
 class PersonalMainActivity : BaseActivity() {
     companion object {
         private val TAG = this::class.java.name.replace("${'$'}Companion", "").split(".").last()
@@ -20,6 +22,7 @@ class PersonalMainActivity : BaseActivity() {
 
         btn_order.setOnClickListener { jumpToOrder() }
         btn_app.setOnClickListener { jumpToApp() }
+
     }
 
     fun jumpToOrder() {

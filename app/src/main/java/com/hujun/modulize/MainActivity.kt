@@ -1,9 +1,9 @@
 package com.hujun.modulize
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.hujun.modulize.annotation.ARouter
+import com.hujun.modulize.apt.`ARouter$$Path$$personal`
 import kotlinx.android.synthetic.main.activity_main.*
 
 @ARouter(path = "/app/MainActivity")
@@ -17,11 +17,24 @@ class MainActivity : AppCompatActivity() {
         btn_personal.setOnClickListener { jumpToPersonal() }
 
 //        `MainActivity$$ARouter`.get1()
+
     }
 
     fun jumpToOrder() {
 //        val intent = Intent(this, Order_MainActivity::class.java)
 //        startActivity(intent)
+//        val groupMap = `ARouter$$Group$$order`()
+//        val map = groupMap.loadGroup()
+//        if (map["order"] != null) {
+//            val path = map["order"]?.newInstance()
+//            val pathMap = path?.loadPath()
+//            val routerBean = pathMap?.get("/order/OrderMainActivity")
+//            if (routerBean != null) {
+//                val intent = Intent(this, routerBean.clazz)
+//                startActivity(intent)
+//            }
+//        }
+
     }
 
     fun jumpToPersonal() {

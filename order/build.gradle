@@ -5,6 +5,7 @@ if (!isRelease) {
 }
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 def androidId = rootProject.ext.androidId
 def support = rootProject.ext.support
@@ -29,6 +30,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("boolean", "isRelease", String.valueOf(isRelease))
+
+        //在gradle文件中配置选项参数值，用于APT传参数值
+        //必须写在defaultConfig节点中
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath false
+                arguments = ["moduleName":project.getName(),"pkgNameForAPT":pkgNameForAPT]
+            }
+        }
     }
 
     buildTypes {
@@ -60,9 +70,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation project(":common")
-
+    kapt project(":compiler")
     support.each { k, v -> implementation v }
     testSupport.each { k, v -> testImplementation v }
     androidTestSupport.each { k, v -> androidTestImplementation v }
-    implementation project(":annotation")
 }

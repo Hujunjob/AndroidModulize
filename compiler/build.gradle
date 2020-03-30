@@ -9,8 +9,8 @@ dependencies {
     // implementation 'com.google.auto.service:auto-service:1.0-rc2'
 
     // As-3.4.1 + gradle5.1.1-all + auto-service:1.0-rc4
-    compileOnly'com.google.auto.service:auto-service:1.0-rc5'
-    annotationProcessor'com.google.auto.service:auto-service:1.0-rc5'
+    compileOnly'com.google.auto.service:auto-service:1.0-rc6'
+    annotationProcessor'com.google.auto.service:auto-service:1.0-rc6'
 
     //引入Annotation，然注解处理器来处理注解
     implementation project(":annotation")

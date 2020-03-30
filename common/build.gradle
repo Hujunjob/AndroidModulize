@@ -2,18 +2,25 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+def androidId = rootProject.ext.androidId
+def support = rootProject.ext.support
+def isRelease = rootProject.ext.isRelease
+def testSupport = rootProject.ext.testSupport
+def androidTestSupport = rootProject.ext.androidTestSupport
+
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdkVersion androidId.compileSdkVersion
+    buildToolsVersion androidId.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion androidId.minSdkVersion
+        targetSdkVersion androidId.targetSdkVersion
+        versionCode androidId.versionCode
+        versionName androidId.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'consumer-rules.pro'
+
+        buildConfigField("boolean", "isRelease", String.valueOf(isRelease))
     }
 
     buildTypes {
@@ -22,15 +29,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.2.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    support.each { k, v -> implementation v }
+    testSupport.each { k, v -> testImplementation v }
+    androidTestSupport.each { k, v -> androidTestImplementation v }
+
+    //采用api来依赖，可以使得其他依赖了本library的module，也能使用api依赖的依赖
+    //每个模块都需要用到routerapim模块对外提供的数据接口
+    //所以用api来依赖
+    api project(":routerapi")
 }

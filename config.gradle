@@ -5,13 +5,15 @@ ext {
     //定义是否是组件化还是集成化
     //false：组件化模式，各个子模块可以独立运行
     //true: 集成化模式，打包整个项目，子模块不能单独运行
-    isRelease = false
+    isRelease = true
 
     appId = [
             app   : "com.hujun.modulize",
             order: "com.hujun.modulize.order",
             personal: "com.hujun.modulize.personal"
     ]
+
+    pkgNameForAPT = "com.hujun.modulize.apt"
 
     //建立Map存储，对象名、key都可以自定义
     androidId = [

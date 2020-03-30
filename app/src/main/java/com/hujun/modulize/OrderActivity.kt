@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.hujun.modulize.annotation.ARouter
 
-@ARouter(path = "/app/OrderActivity")
+@ARouter(path = "/app/OrderActivity",group = "app")
 class OrderActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
