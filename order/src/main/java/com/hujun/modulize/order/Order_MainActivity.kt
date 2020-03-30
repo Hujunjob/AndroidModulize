@@ -22,6 +22,7 @@ class Order_MainActivity : BaseActivity() {
 
         btn_app.setOnClickListener { jumpToApp() }
         btn_personal.setOnClickListener { jumpToPersonal() }
+
     }
 
     fun jumpToApp(){

@@ -2,9 +2,14 @@ package com.hujun.compiler;
 
 import com.google.auto.service.AutoService;
 import com.hujun.modulize.annotation.ARouter;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.reflect.Method;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -18,6 +23,7 @@ import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -96,21 +102,59 @@ public class ARouterProcessor extends AbstractProcessor {
         try {
             JavaFileObject sourceFile = filer.createSourceFile(pkgName+"."+finalClassName);
             Writer writer = sourceFile.openWriter();
-            StringBuilder builder = new StringBuilder();
-            builder.append("package "+pkgName+";\n");
-            builder.append("public class "+finalClassName+"{\n");
-            builder.append("public static Class<?> findTargetClass(String path){\n");
-            ARouter router = element.getAnnotation(ARouter.class);
-            builder.append("if (path.equalsIgnoreCase(\""+router.path()+"\")){\n");
-            builder.append("return "+className+".class;\n");
-            builder.append("}\n");
-            builder.append("return null;\n");
-            builder.append("}\n}");
-            writer.write(builder.toString());
+//            String javaCode = generateJavaByText(pkgName,className,finalClassName,element);
+            String javaCode = generateJavaByJavaPoet(pkgName,className,finalClassName,element);
+            print(javaCode);
+            writer.write(javaCode);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+//package com.hujun.modulize;
+//
+//    public class OrderActivity$$ARouter {
+//        public static Class<?> findTargetClass(String path) {
+//            if (path.equalsIgnoreCase("/app/OrderActivity")) {
+//                return OrderActivity.class;
+//            }
+//            return null;
+//        }
+//    }
+    private String generateJavaByJavaPoet(String pkgName,String className,String finalClassName,Element element){
+        ARouter router = element.getAnnotation(ARouter.class);
+        MethodSpec methodSpec = MethodSpec.methodBuilder("findTargetClass")
+                .addModifiers(Modifier.PUBLIC,Modifier.STATIC)
+                .returns(Class.class)
+                .addParameter(String.class,"path")
+                .beginControlFlow("if(path.equalsIgnoreCase($S))",router.path())
+                .addStatement("return $T.class", ClassName.get((TypeElement) element))
+                .endControlFlow()
+                .addStatement("return null")
+                .build();
+
+        TypeSpec typeSpec = TypeSpec.classBuilder(finalClassName)
+                .addModifiers(Modifier.PUBLIC)
+                .addMethod(methodSpec)
+                .build();
+
+        JavaFile javaFile = JavaFile.builder(pkgName,typeSpec).build();
+        return javaFile.toString();
+    }
+
+
+    private String generateJavaByText(String pkgName,String className,String finalClassName,Element element){
+        StringBuilder builder = new StringBuilder();
+        builder.append("package "+pkgName+";\n");
+        builder.append("public class "+finalClassName+"{\n");
+        builder.append("public static Class<?> findTargetClass(String path){\n");
+        ARouter router = element.getAnnotation(ARouter.class);
+        builder.append("if (path.equalsIgnoreCase(\""+router.path()+"\")){\n");
+        builder.append("return "+className+".class;\n");
+        builder.append("}\n");
+        builder.append("return null;\n");
+        builder.append("}\n}");
+        return builder.toString();
     }
 
     private void print(String msg){
