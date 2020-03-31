@@ -136,8 +136,8 @@ public class ARouterProcessor extends AbstractProcessor {
         if (EmptyUtils.isEmpty(tempPathMap)) {
             return;
         }
-        TypeElement groupLoadFile = elementUtils.getTypeElement(Constants.API_PACKAGE + Constants.AROUTER_GROUP);
-        TypeElement pathLoadFile = elementUtils.getTypeElement(Constants.API_PACKAGE + Constants.AROUTER_PATH);
+        TypeElement groupLoadFile = elementUtils.getTypeElement( Constants.AROUTER_GROUP);
+        TypeElement pathLoadFile = elementUtils.getTypeElement( Constants.AROUTER_PATH);
         //1.生成路由的Path类文件，如ARouter$$Path$$app
         createPathFile(pathLoadFile);
 

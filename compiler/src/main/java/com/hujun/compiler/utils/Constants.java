@@ -7,6 +7,8 @@ public class Constants {
     //注解处理器需要处理的类的全路径
     public static final String AROUTER_ANNOTATION_TYPES = "com.hujun.modulize.annotation.ARouter";
 
+    public static final String PARAMETER_ANNOTATION_TYPES = "com.hujun.modulize.annotation.Parameter";
+
     //在gradle里需要传递给注解处理器的信息，这是key-value里的key
     public static final String MODULE_NAME = "moduleName";
 
@@ -18,9 +20,9 @@ public class Constants {
 
     public static final String API_PACKAGE = "com.hujun.modulize.api";
 
-    public static final String AROUTER_PATH = ".core.ARouterLoadPath";
+    public static final String AROUTER_PATH = Constants.API_PACKAGE + ".core.ARouterLoadPath";
 
-    public static final String AROUTER_GROUP = ".core.ARouterLoadGroup";
+    public static final String AROUTER_GROUP = Constants.API_PACKAGE + ".core.ARouterLoadGroup";
 
     /********************************** APT需要用的常量  ***********************************/
     public static final String PATH_METHOD_NAME = "loadPath";

@@ -8,6 +8,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 @ARouter(path = "/app/MainActivity")
 class MainActivity : AppCompatActivity() {
+    var name: String = ""
+    var age: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
